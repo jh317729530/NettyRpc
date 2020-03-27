@@ -51,7 +51,9 @@ public class NettyServer {
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel nioSocketChannel) throws Exception {
-//                        nioSocketChannel.pipeline().addLast(new FirstServerHandler());
+                        nioSocketChannel.pipeline().addLast(new JSONEncoder());
+                        nioSocketChannel.pipeline().addLast(new JSONDecoder());
+                        nioSocketChannel.pipeline().addLast(new ServiceInvokeHandler());
                     }
                 });
 
