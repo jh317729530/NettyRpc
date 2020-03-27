@@ -39,6 +39,12 @@ public class NettyServer {
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
 
         this.serverBootstrap = new ServerBootstrap();
+
+        // 先梳理接收到服务调用几个要处理的步骤
+        // 1. 反序列化，其中还要解决粘包
+        // 2. 根据反序列化后的数据去查找服务，并调用获取到结果，并封装
+        // 3. 将结果序列化后，返回给服务消费端
+
         serverBootstrap
                 .group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
