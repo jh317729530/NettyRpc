@@ -15,4 +15,13 @@ public class ServiceRepository {
     public static void registerService(String name, Service service) {
         SERVICES.put(name, service);
     }
+
+    /**
+     * 查找服务
+     * @param name
+     * @return
+     */
+    public static Service getServiceByName(String name) {
+        return SERVICES.get(name);
+    }
 }
