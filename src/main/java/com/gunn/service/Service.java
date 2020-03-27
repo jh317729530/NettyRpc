@@ -1,5 +1,6 @@
 package com.gunn.service;
 
+import com.gunn.remoting.NettyServer;
 import lombok.Data;
 
 /**
@@ -41,6 +42,6 @@ public class Service<T> {
         // 1. 存储服务提供的对象，并能够方便查找，先不考虑服务依赖的问题
         ServiceRepository.registerService(this.name, this);
         // 2. 开启服务端监听，如果有多个服务提供者时，不必重复开启服务端，只需执行1和2
-
+        NettyServer.getInstance().bind();
     }
 }
