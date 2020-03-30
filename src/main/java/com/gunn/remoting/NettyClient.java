@@ -136,6 +136,8 @@ public class NettyClient {
                 response.setErrorMsg("请求超时！");
                 response.setStatus(Response.ERROR);
                 return response;
+            }finally {
+                requestWaiting.remove(request.getRequestId());
             }
             return responses.get(request.getRequestId());
         } else {
