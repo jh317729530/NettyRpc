@@ -20,6 +20,7 @@ public class ServiceInvokeHandler extends ChannelInboundHandlerAdapter {
 
         System.out.println("RPC客户端请求接口:" + request.getServiceName() + "   方法名:" + request.getMethodName());
         Response response = new Response();
+        response.setRequestId(request.getRequestId());
         try {
             Object result = this.handleRequest(request);
             response.setResult(result);
@@ -40,7 +41,7 @@ public class ServiceInvokeHandler extends ChannelInboundHandlerAdapter {
 
         Method method;
         try {
-            method = service.getInterfaceClass().getMethod(request.getMethodName());
+            method = service.getInterfaceClass().getMethod(request.getMethodName(), String.class);
         } catch (NoSuchMethodException e) {
             throw new RpcException("找不到方法！");
         }

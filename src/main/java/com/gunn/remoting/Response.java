@@ -15,6 +15,8 @@ public class Response {
 
     public static final byte ERROR = 80;
 
+    private int requestId;
+
     private byte status = OK;
 
     private String errorMsg;

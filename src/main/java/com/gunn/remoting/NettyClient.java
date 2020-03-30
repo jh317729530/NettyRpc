@@ -10,6 +10,10 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.Data;
 import sun.misc.Unsafe;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+
 @Data
 public class NettyClient {
 
@@ -35,6 +39,9 @@ public class NettyClient {
 
     private static final Unsafe unsafe = UnsafeUtils.getUnsafe();
 
+    private ConcurrentHashMap<Integer, CountDownLatch> requestWaiting = new ConcurrentHashMap<>();
+
+    private ConcurrentHashMap<Integer, Response> responses = new ConcurrentHashMap<>();
 
     public static NettyClient getInstance() {
         if (null == CLIENT) {
@@ -86,15 +93,16 @@ public class NettyClient {
      *
      * @return
      */
-    private void connect() {
+    public void connect() {
         if (!isConnected() && unsafe.compareAndSwapInt(this,bindStatusOffset,NOT_CONNECT,CONNECTING)) {
             connectFuture = bootstrap.connect("localhost",18080).addListener(future -> {
                 if (future.isSuccess()) {
                     unsafe.compareAndSwapInt(this, bindStatusOffset, CONNECTING, CONNECTED);
-                    System.out.println("Server bind success!");
+                    this.channel = connectFuture.channel();
+                    System.out.println("Client connect success!");
                 } else {
                     unsafe.compareAndSwapInt(this, bindStatusOffset, CONNECTING, CONNECT_FAIL);
-                    System.out.println("Server bind failed");
+                    System.out.println("Client connect failed");
                 }
             });
         }
@@ -105,7 +113,7 @@ public class NettyClient {
             connect();
 
             try {
-                connectFuture.await();
+                connectFuture.sync();
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 Response response = new Response();
@@ -115,6 +123,26 @@ public class NettyClient {
             }
         }
 
-        if (null != channel && )
+        System.out.println(channel);
+        if (null != channel && channel.isActive()) {
+            CountDownLatch countDownLatch = new CountDownLatch(1);
+            requestWaiting.put(request.getRequestId(), countDownLatch);
+            channel.writeAndFlush(request);
+            try {
+                countDownLatch.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                Response response = new Response();
+                response.setErrorMsg("请求超时！");
+                response.setStatus(Response.ERROR);
+                return response;
+            }
+            return responses.get(request.getRequestId());
+        } else {
+            Response response = new Response();
+            response.setErrorMsg("未连接到服务端");
+            response.setStatus(Response.ERROR);
+            return response;
+        }
     }
 }

@@ -99,7 +99,7 @@ public class NettyServer {
     public boolean isBind() {
         if (BINDING == bindStatus) {
             try {
-                bindFuture.await();
+                bindFuture.sync();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

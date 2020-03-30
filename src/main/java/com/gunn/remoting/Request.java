@@ -9,6 +9,11 @@ import lombok.Data;
 public class Request {
 
     /**
+     * 记录每次请求的id，每个请求id唯一
+     */
+    private int requestId;
+
+    /**
      * 请求的服务名称
      */
     private String serviceName;
