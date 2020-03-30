@@ -25,8 +25,10 @@ public class ClientTest {
         request.setRequestId(1);
         request.setServiceName(HelloService.class.getName());
         request.setMethodName("sayHello");
+        request.setParamClassTypes(new Class[]{String.class});
         request.setParams(new Object[] {"test"});
         Response response = client.sendRequest(request);
+        System.out.println("finish request");
         System.out.println(response);
         assert null != response && response.getStatus() == Response.OK;
     }

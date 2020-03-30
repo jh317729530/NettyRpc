@@ -24,6 +24,11 @@ public class Request {
     private String methodName;
 
     /**
+     * 请求参数类型
+     */
+    private Class[] paramClassTypes;
+
+    /**
      * 请求的参数
      */
     private Object[] params;

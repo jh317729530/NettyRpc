@@ -41,7 +41,7 @@ public class ServiceInvokeHandler extends ChannelInboundHandlerAdapter {
 
         Method method;
         try {
-            method = service.getInterfaceClass().getMethod(request.getMethodName(), String.class);
+            method = service.getInterfaceClass().getMethod(request.getMethodName(), request.getParamClassTypes());
         } catch (NoSuchMethodException e) {
             throw new RpcException("找不到方法！");
         }
