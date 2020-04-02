@@ -16,8 +16,6 @@ public class ServiceTest {
         Service<HelloServiceImpl> helloServiceService = new Service<>(HelloService.class);
         helloServiceService.setRef(new HelloServiceImpl());
         helloServiceService.export();
-        NettyServer instance = NettyServer.getInstance();
-
         TimeUnit.SECONDS.sleep(2);
         System.in.read();
     }
